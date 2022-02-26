@@ -3,8 +3,8 @@ declare const LOGIN_WINDOW_WEBPACK_ENTRY: string
 declare const LOGIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 declare const ADMIN_WINDOW_WEBPACK_ENTRY: string
 declare const ADMIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
-/* declare const ADMIN_WINDOW_WEBPACK_ENTRY: string
-declare const ADMIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string */
+declare const CHECKOUT_BOX_WINDOW_WEBPACK_ENTRY: string
+declare const CHECKOUT_BOX_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 (async () => {
   if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
     app.quit()
@@ -62,14 +62,14 @@ declare const ADMIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string */
         e.returnValue = pathOpen ? pathOpen[0] : ''
       })
     })
-    /* ipcMain.on('open-admin-window', () => {
+    ipcMain.on('open-checkout-box-window', (_, user) => {
       const mainWindowAdmin = new BrowserWindow({
         minHeight: 700,
         width: 800,
         show: false,
-        title: 'Pharmacy System - Administrador',
+        title: 'Pharmacy System - Caja',
         webPreferences: {
-          preload: ADMIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+          preload: CHECKOUT_BOX_WINDOW_PRELOAD_WEBPACK_ENTRY,
           nodeIntegration: true,
           contextIsolation: true
         }
@@ -78,9 +78,10 @@ declare const ADMIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string */
         loginWindow.destroy()
         mainWindowAdmin.show()
       })
-      mainWindowAdmin.loadURL(ADMIN_WINDOW_WEBPACK_ENTRY)
+      ipcMain.once('get-user', event => event.returnValue = user)
+      mainWindowAdmin.loadURL(CHECKOUT_BOX_WINDOW_WEBPACK_ENTRY)
       mainWindowAdmin.webContents.openDevTools()
-    }) */
+    })
   }
   app.whenReady().then(createWindow)
   app.on('window-all-closed', () => {

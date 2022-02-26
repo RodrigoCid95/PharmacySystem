@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from "electron"
 import fs from 'fs'
 import path from 'path'
 import { Database } from 'sqlite3'
+import { Encryptor } from "./../../encryptor"
 const NAME_TABLE = 'Users'
 let pathDatabase = ''
 if (process.env.HOME) {
@@ -29,12 +30,29 @@ const auth: Auth = {
         throw new Error("Nombre de usuario incorrecto!")
       }
     } else {
-      const result = await new Promise(resolve => db.get('select * from "' + NAME_TABLE + '" where userName = ?', [userName], (error, row) => {
-        console.log(error, row)
-        resolve('')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result: any = await new Promise((resolve, reject) => db.get('select * from "' + NAME_TABLE + '" where userName = ?', [userName], (error, rows) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve(rows)
+        }
       }))
-      console.log(result)
-      return
+      if (result) {
+        if (result.disabled) {
+          throw new Error(`El usuario "${userName}" está deshabilitado!`)
+        } else {
+          const hashDecode = Encryptor.decode(result.hashPass, password)
+          if (hashDecode === userName) {
+            delete result.hashPass
+            ipcRenderer.sendSync('open-checkout-box-window', result)
+          } else {
+            throw new Error('La contraseña es incorrecta!')
+          }
+        }
+      } else {
+        throw new Error(`El usuario "${userName}" no existe!`)
+      }
     }
   }
 }

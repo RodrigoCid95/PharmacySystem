@@ -69,6 +69,14 @@
                     "js": "./src/admin/API/index.ts"
                   },
                   "name": "admin_window"
+                },
+                {
+                  "html": "./src/checkout-box/index.html",
+                  "js": "./src/checkout-box/renderer.tsx",
+                  "preload": {
+                    "js": "./src/checkout-box/API/index.ts"
+                  },
+                  "name": "checkout_box_window"
                 }
               ]
             }

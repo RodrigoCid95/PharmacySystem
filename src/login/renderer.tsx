@@ -62,11 +62,12 @@ const SignIn: React.FC = () => {
           } else if (password === '') {
             setError('Escribe una contraseña!')
           } else {
-            alert('Esta sección aún esta en desarrollo!')
-            /* auth.enter(userName, password, false).catch((error: Error) => {
+            auth.enter(userName, password, false).then(() => {
+              console.log('Ready!')
+            }).catch((error: Error) => {
               console.error(error)
               setError(error.message)
-            }) */
+            })
           }
         }}
         split

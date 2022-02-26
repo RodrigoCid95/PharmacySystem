@@ -84,7 +84,9 @@ export default class UserComponent extends React.Component<UserComponentProps, U
               >
                 {error}
               </MessageBar>}
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               <TextField defaultValue={user.userName} required label="Nombre de usuario" onChange={(e: any) => this.setState({ user: { ...user, userName: e.target.value } })} />
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               <TextField defaultValue={user.name} required label="Nombre completo" onChange={(e: any) => this.setState({ user: { ...user, name: e.target.value } })} />
             </Stack>
             <Stack styles={{ root: { paddingTop: '1rem' } }}>
@@ -98,6 +100,7 @@ export default class UserComponent extends React.Component<UserComponentProps, U
             </Stack>
             {user.id === '' && (
               <Stack styles={{ root: { marginBottom: '1rem' } }}>
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 <TextField defaultValue={password} required type="password" label="Contraseña" onChange={(e: any) => this.setState({ password: e.target.value })} />
               </Stack>
             )}
