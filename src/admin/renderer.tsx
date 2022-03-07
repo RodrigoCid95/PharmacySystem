@@ -5,11 +5,13 @@ import { useBoolean } from '@fluentui/react-hooks'
 import { mergeStyles } from '@fluentui/react/lib/Styling'
 import { IStackTokens, Stack } from '@fluentui/react/lib/Stack'
 import { Text } from '@fluentui/react/lib/Text'
-import { ActionButton, IconButton, PrimaryButton } from '@fluentui/react/lib/Button'
+import { ActionButton, DefaultButton, IconButton, PrimaryButton } from '@fluentui/react/lib/Button'
 import { Panel, PanelType } from '@fluentui/react/lib/Panel'
 import { initializeIcons } from '@fluentui/font-icons-mdl2'
 import Loading from './components/loading'
+import Alert from './components/alert'
 import { AppAPI } from './API/app/types'
+import { ITextField, TextField } from '@fluentui/react'
 
 declare const app: AppAPI
 
@@ -33,8 +35,14 @@ const IndexPage = React.lazy(() => import('./pages/index'))
 const UsersPage = React.lazy(() => import('./pages/users'))
 const ProductsPage = React.lazy(() => import('./pages/products'))
 const BarCodesPage = React.lazy(() => import('./pages/barCodes'))
-
-const Menu: React.FC<{ isOpen: boolean; dismissPanel: () => void; onChangeTitle: (title: string) => void; onChangeLoading: (label: string) => void }> = ({ isOpen, dismissPanel, onChangeTitle, onChangeLoading }) => {
+interface MenuProps {
+  isOpen: boolean
+  dismissPanel: () => void
+  onChangeTitle: (title: string) => void
+  onChangeLoading: (label: string) => void
+  onChangeCredentials: () => void
+}
+const Menu: React.FC<MenuProps> = ({ isOpen, dismissPanel, onChangeTitle, onChangeLoading, onChangeCredentials }) => {
   const navigate = useNavigate()
   const onRenderFooterContent = React.useCallback(
     () => (
@@ -107,6 +115,15 @@ const Menu: React.FC<{ isOpen: boolean; dismissPanel: () => void; onChangeTitle:
         >
           Códigos de barras
         </ActionButton>
+        <ActionButton
+          iconProps={{ iconName: 'Signin' }}
+          onClick={() => {
+            onChangeCredentials()
+            dismissPanel()
+          }}
+        >
+          Cambiar credenciales
+        </ActionButton>
       </Stack>
     </Panel>
   )
@@ -114,8 +131,11 @@ const Menu: React.FC<{ isOpen: boolean; dismissPanel: () => void; onChangeTitle:
 
 const AdminDashboard: React.FC = () => {
   const [isOpenMenu, { setTrue: openMenu, setFalse: dismissMenu }] = useBoolean(false)
+  const [isOpenChangeCredentials, { setTrue: openChangeCredentials, setFalse: dismissChangeCredentials }] = useBoolean(false)
   const [labelLoading, setLabelLoading] = React.useState('')
   const [title, setTitle] = React.useState('')
+  const userNameRef = React.useRef<ITextField>(null)
+  const passwordRef = React.useRef<ITextField>(null)
   return (
     <Stack
       className={mergeStyles({
@@ -140,6 +160,7 @@ const AdminDashboard: React.FC = () => {
                 dismissPanel={dismissMenu}
                 onChangeTitle={setTitle}
                 onChangeLoading={label => setLabelLoading(label)}
+                onChangeCredentials={openChangeCredentials}
               />
               <Routes>
                 <Route path="/" element={
@@ -163,6 +184,54 @@ const AdminDashboard: React.FC = () => {
                   </React.Suspense>
                 } />
               </Routes>
+              {isOpenChangeCredentials && (
+                <Alert
+                  title='Ingresa las nuevas credenciales'
+                  onDismiss={dismissChangeCredentials}
+                >
+                  <Stack className={mergeStyles({ marginBottom: '1rem' })}>
+                    <TextField
+                      label='Nombre de usuario:'
+                      componentRef={userNameRef}
+                      placeholder="Escribe un nombre de usuario ..."
+                      className={mergeStyles({ marginBottom: '1rem' })}
+                    />
+                    <TextField
+                      label='Contraseña:'
+                      type="password"
+                      canRevealPassword
+                      revealPasswordAriaLabel="Mostrar contraseña"
+                      componentRef={passwordRef}
+                      placeholder="Escribe una contraseña ..."
+                    />
+                  </Stack>
+                  <Stack horizontal horizontalAlign="space-around">
+                    <DefaultButton
+                      primary
+                      text="Guardar"
+                      onClick={() => {
+                        const userName = userNameRef.current?.value
+                        if (!userName) {
+                          return
+                        }
+                        const password = passwordRef.current?.value
+                        if (!password) {
+                          return
+                        }
+                        if (userName === password) {
+                          return
+                        }
+                        app.changeCredentials(userName, password)
+                        dismissChangeCredentials()
+                      }}
+                    />
+                    <DefaultButton
+                      text="Cancelar"
+                      onClick={dismissChangeCredentials}
+                    />
+                  </Stack>
+                </Alert>
+              )}
             </MemoryRouter>
           </Stack>
         </React.Fragment>

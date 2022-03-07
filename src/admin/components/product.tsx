@@ -32,7 +32,7 @@ export class ProductComponent extends React.Component<ProductComponentProps, Pro
     }
   }
   private _handlerOnSave(product: Product) {
-    if (product.id !== '') {
+    if (product.id) {
       products.update(product).then(() => {
         this.setState({ loading: false })
         this.props.onDismiss(true)
@@ -132,7 +132,7 @@ const Form: React.FC<FormProps> = ({ product, setLoading, onReturnValue, onCance
     const stock = parseInt(stockRef.current?.value || product?.stock.toString() || '0')
     const minStock = parseInt(minStockRef.current?.value || '0')
     const newProduct: Product = {
-      id: product?.id || '',
+      id: product?.id || 0,
       name,
       description,
       sku,
@@ -141,8 +141,7 @@ const Form: React.FC<FormProps> = ({ product, setLoading, onReturnValue, onCance
       stock,
       minStock,
       isPackage,
-      piecesPerPackage,
-      realStock: isPackage ? (piecesPerPackage * stock) : stock
+      piecesPerPackage
     }
     onReturnValue(newProduct)
   }, [isPackage, onReturnValue, product, thumbnail])

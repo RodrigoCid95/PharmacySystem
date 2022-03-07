@@ -18,7 +18,7 @@ if (!fs.existsSync(pathDatabase)) {
 const sqlite3 = require('sqlite3').verbose()
 const db: Database = new sqlite3.Database(pathDatabase);
 db.run('CREATE TABLE IF NOT EXISTS "BarCodes" ( "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "name"	TEXT, "value"	TEXT );', () => {
-  db.run('CREATE TABLE IF NOT EXISTS "Products" ( "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "name"	TEXT NOT NULL, "description"	TEXT, "sku"	TEXT NOT NULL, "thumbnail"	TEXT, "price"	INTEGER NOT NULL, "stock"	INTEGER NOT NULL, "minStock"	INTEGER, "isPackage"	INTEGER NOT NULL, "piecesPerPackage"	INTEGER, "realStock"	INTEGER );')
+  db.run('CREATE TABLE IF NOT EXISTS "Products" ( "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "name"	TEXT NOT NULL, "description"	TEXT, "sku"	TEXT NOT NULL, "thumbnail"	TEXT, "price"	INTEGER NOT NULL, "stock"	INTEGER NOT NULL, "minStock"	INTEGER, "isPackage"	INTEGER NOT NULL, "piecesPerPackage"	INTEGER, "active"	BOOLEAN );')
 })
 fs.mkdirSync(path.resolve(__dirname, '..', 'ps-images'), { recursive: true })
 app(db)

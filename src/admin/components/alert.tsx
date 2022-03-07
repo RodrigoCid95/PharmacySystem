@@ -58,7 +58,7 @@ const Alert: React.FC<AlertProps> = ({ onDismiss, title, children }) => (
       />
     </div>
     <div className={contentStyles.body}>
-      <Stack styles={{ root: { width: '300px' } }}>
+      <Stack>
         {children}
       </Stack>
     </div>

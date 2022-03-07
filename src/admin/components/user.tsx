@@ -25,7 +25,7 @@ export default class UserComponent extends React.Component<UserComponentProps, U
       loading: false,
       error: '',
       user: props.user || {
-        id: '',
+        id: 0,
         userName: '',
         name: '',
         disabled: false
@@ -44,12 +44,12 @@ export default class UserComponent extends React.Component<UserComponentProps, U
       this.setState({ error: 'Escribe el nombre del usuario!' })
       return
     }
-    if (user.id === '' && password === '') {
+    if (id === 0 && password === '') {
       this.setState({ error: 'Escribe una contraseña!' })
       return
     }
     this.setState({ loading: true })
-    if (id === '') {
+    if (id === 0) {
       users.create(user, password).then(this.props.onDismiss).catch((error: Error) => {
         console.error(error)
         this.setState({ loading: false, error: error.message })
@@ -66,7 +66,7 @@ export default class UserComponent extends React.Component<UserComponentProps, U
     const { loading, error, user, password } = this.state
     return (
       <Alert
-        title={`${user.id === '' ? 'Nuevo' : 'Editar'} usuario`}
+        title={`${user.id === 0 ? 'Nuevo' : 'Editar'} usuario`}
         onDismiss={onDismiss}
       >
         {loading && (
@@ -98,7 +98,7 @@ export default class UserComponent extends React.Component<UserComponentProps, U
                 offText="Deshabilitado"
               />
             </Stack>
-            {user.id === '' && (
+            {user.id === 0 && (
               <Stack styles={{ root: { marginBottom: '1rem' } }}>
                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 <TextField defaultValue={password} required type="password" label="Contraseña" onChange={(e: any) => this.setState({ password: e.target.value })} />

@@ -9,8 +9,8 @@ export default (db: Database) => {
       const hashPassword = Encryptor.encode(userName, password)
       return new Promise(resolve =>
         db.run(
-          'insert into "' + NAME_TABLE + '" (name, userName, hashPass, disabled) values (?, ?, ?, ?) ',
-          [name, userName, hashPassword, disabled],
+          'insert into "' + NAME_TABLE + '" (name, userName, hashPass, disabled, active) values (?, ?, ?, ?, ?) ',
+          [name, userName, hashPassword, disabled, true],
           resolve
         )
       )
@@ -18,8 +18,8 @@ export default (db: Database) => {
     read: () =>
       new Promise(resolve =>
         db.all(
-          'select * from "' + NAME_TABLE + '"',
-          (error, rows) =>
+          'select * from "' + NAME_TABLE + '" where active = true',
+          (_, rows) =>
             resolve(rows || [])
         )
       ),
@@ -34,8 +34,8 @@ export default (db: Database) => {
     delete: id =>
       new Promise(resolve =>
         db.run(
-          'delete from "' + NAME_TABLE + '" where id = ?',
-          [id],
+          'update "' + NAME_TABLE + '" set active = ? where id = ?',
+          [false, id],
           resolve
         )
       )

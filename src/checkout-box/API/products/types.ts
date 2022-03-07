@@ -1,5 +1,5 @@
 export type Product = {
-  id: string
+  id: number
   name: string
   description: string
   sku: string
@@ -11,7 +11,20 @@ export type Product = {
   piecesPerPackage: number
   realStock: number
 }
+export interface Item extends Product {
+  count: number
+  subTotal: number
+}
+export type Buy = {
+  id?: number
+  id_user: number
+  id_product: number
+  date: string
+  count: number
+  total: number
+}
 export type ProductsAPI = {
   find: (value: string, searchType: boolean) => Promise<Product[]>
+  checkout: (products: Item[], idUser: number) => Promise<void>
 }
 export default null

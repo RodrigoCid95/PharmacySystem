@@ -1,11 +1,12 @@
 export type User = {
-  id?: string
+  id?: number
   name: string
   userName: string
   disabled: boolean
 }
 export interface DataUser extends User {
   hashPassword: string
+  active: boolean
 }
 export type UsersAPI = {
   create: (user: User, password: string) => Promise<void>

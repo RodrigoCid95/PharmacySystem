@@ -195,19 +195,23 @@ function _renderItemColumn(item: Product, index?: number | undefined, column?: I
       return <span>${fieldContent}</span>
     } else if (column.key === 'stock') {
       if (item.isPackage) {
-        if (item.realStock === 0) {
+        if (item.stock === 0) {
           return <span>Agotado</span>
         } else {
-          const results = (item.realStock / item.piecesPerPackage).toString().split('.')
-          const packages = parseInt(results[0])
-          const unitys = results[1] ? item.piecesPerPackage * (parseFloat('.' + results[1])) : 0
-          return <span>{packages} paquetes y {unitys} unidades.</span>
+          const result = item.stock.toString().split('.')
+          const packages = result[0]
+          const unitys = result[1] ? parseFloat(result[1]) : 0
+          if (unitys > 0) {
+            return <span>{packages} paquetes y {unitys} piezas.</span>
+          } else {
+            return <span>{packages} paquetes.</span>
+          }
         }
       } else {
         if (item.stock === 0) {
           return <span>Agotado</span>
         } else {
-          return <span>{fieldContent}</span>
+          return <span>{fieldContent} paquetes.</span>
         }
       }
     } else {

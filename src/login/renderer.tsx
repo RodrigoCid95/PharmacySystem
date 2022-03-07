@@ -46,7 +46,7 @@ const SignIn: React.FC = () => {
           label="Contraseña:"
           type="password"
           canRevealPassword
-          revealPasswordAriaLabel="Show password"
+          revealPasswordAriaLabel="Mostrar contraseña"
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           onChange={(e: any) => setPassword(e.target.value)}
         />

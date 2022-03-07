@@ -1,5 +1,5 @@
 export type Product = {
-  id: string
+  id: number
   name: string
   description: string
   sku: string
@@ -9,7 +9,9 @@ export type Product = {
   minStock: number
   isPackage: boolean
   piecesPerPackage: number
-  realStock: number
+}
+export interface DataProduct extends Product {
+  active: boolean
 }
 export type ProductsAPI = {
   create: (product: Product) => Promise<void>

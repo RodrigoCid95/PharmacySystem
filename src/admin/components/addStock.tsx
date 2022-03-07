@@ -17,17 +17,18 @@ const AddStock: React.FC<AddStockProps> = ({ product, onSave }) => {
   const [isOpenModal, { setTrue: showModal, setFalse: hideModal }] = useBoolean(false)
   const [isShowLoading, { setTrue: showLoading, setFalse: hideLoading }] = useBoolean(false)
   const _handlerOnSave = React.useCallback(() => {
-    showLoading()
     const numberStock = parseInt(stockRef.current?.value || '0')
-    product.realStock = product.isPackage ? product.realStock + (numberStock * product.piecesPerPackage) : product.realStock + numberStock
-    product.stock += numberStock
-    products.update(product).then(() => {
-      hideLoading()
-      hideModal()
-      onSave()
-    }).catch(error => {
-      console.error(error)
-    })
+    if (numberStock > 0) {
+      showLoading()
+      product.stock += numberStock
+      products.update(product).then(() => {
+        hideLoading()
+        hideModal()
+        onSave()
+      }).catch(error => {
+        console.error(error)
+      })
+    }
   }, [hideLoading, hideModal, onSave, product, showLoading])
   return (
     <React.Fragment>

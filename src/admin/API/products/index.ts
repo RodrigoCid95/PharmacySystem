@@ -6,38 +6,38 @@ import { Database } from 'sqlite3'
 const NAME_TABLE = 'Products'
 export default (db: Database) => {
   const productsAPI: ProductsAPI = {
-    create: async ({ name, description, sku, thumbnail, price, stock, minStock, isPackage, piecesPerPackage, realStock }) => {
+    create: async ({ name, description, sku, thumbnail, price, stock, minStock, isPackage, piecesPerPackage }) => {
       await new Promise<void>((resolve) => {
         db.run(
-          'insert into "' + NAME_TABLE + '" (name, description, sku, price, stock, minStock, isPackage, piecesPerPackage, realStock) values (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          [name, description, sku, price, stock, minStock, isPackage, piecesPerPackage, realStock],
+          'insert into "' + NAME_TABLE + '" (name, description, sku, price, stock, minStock, isPackage, piecesPerPackage) values (?, ?, ?, ?, ?, ?, ?, ?)',
+          [name, description, sku, price, stock, minStock, isPackage, piecesPerPackage],
           resolve
         )
       })
       const { id } = await new Promise(resolve => {
-        db.get('SELECT * FROM "' + NAME_TABLE + '" ORDER BY id DESC LIMIT 1', (error, row) => resolve(row))
+        db.get('SELECT * FROM "' + NAME_TABLE + '" ORDER BY id DESC LIMIT 1', (_, row) => resolve(row))
       })
       if (thumbnail) {
-        await productsAPI.updateThumbnail({ id, name, description, sku, thumbnail, price, stock, minStock, isPackage, piecesPerPackage, realStock }, thumbnail)
+        await productsAPI.updateThumbnail({ id, name, description, sku, thumbnail, price, stock, minStock, isPackage, piecesPerPackage }, thumbnail)
       }
     },
     read: async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const rows: any[] = await new Promise(resolve => db.all('select * from "' + NAME_TABLE + '"', (error, rows) => resolve(rows)))
+      const rows: any[] = await new Promise(resolve => db.all('select * from "' + NAME_TABLE + '" where active = true', (error, rows) => resolve(rows)))
       return rows.map(({ id, name, description, sku, thumbnail, price, stock, minStock, isPackage, piecesPerPackage, realStock }) => {
         return { id: id.toString(), name, description, sku, thumbnail: (thumbnail ? '/ps-images/' + thumbnail : ''), price, stock, minStock, isPackage, piecesPerPackage, realStock }
       })
     },
-    update: ({ id, name, description, sku, thumbnail, price, stock, minStock, isPackage, piecesPerPackage, realStock }) => {
+    update: ({ id, name, description, sku, thumbnail, price, stock, minStock, isPackage, piecesPerPackage }) => {
       return new Promise(resolve => db.run(
-        'update "' + NAME_TABLE + '" set name = ?, description = ?, sku = ?, thumbnail = ?, price = ?, stock = ?, minStock = ?, isPackage = ?, piecesPerPackage = ?, realStock = ? where id = ?',
-        [name, description, sku, thumbnail, price, stock, minStock, isPackage, piecesPerPackage, realStock, id],
+        'update "' + NAME_TABLE + '" set name = ?, description = ?, sku = ?, thumbnail = ?, price = ?, stock = ?, minStock = ?, isPackage = ?, piecesPerPackage = ? where id = ?',
+        [name, description, sku, thumbnail, price, stock, minStock, isPackage, piecesPerPackage, id],
         resolve
       ))
     },
     delete: id => {
       return new Promise(resolve => {
-        db.run('delete from "' + NAME_TABLE + '" where id = ?', [id], resolve)
+        db.run('update "' + NAME_TABLE + '" set active = ? where id = ?', [false, id], resolve)
       })
     },
     selectImage: (callback) => {

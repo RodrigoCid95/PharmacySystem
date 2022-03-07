@@ -45,7 +45,6 @@ declare const CHECKOUT_BOX_WINDOW_PRELOAD_WEBPACK_ENTRY: string
         loginWindow.destroy()
         adminWindow.show()
       })
-      /* adminWindow.webContents.openDevTools() */
       adminWindow.loadURL(ADMIN_WINDOW_WEBPACK_ENTRY)
       ipcMain.on('open-save-dialog', (e, filters) => {
         const pathSave = dialog.showSaveDialogSync(adminWindow, {
@@ -65,7 +64,7 @@ declare const CHECKOUT_BOX_WINDOW_PRELOAD_WEBPACK_ENTRY: string
     ipcMain.on('open-checkout-box-window', (_, user) => {
       const mainWindowAdmin = new BrowserWindow({
         minHeight: 700,
-        width: 800,
+        fullscreen: true,
         show: false,
         title: 'Pharmacy System - Caja',
         webPreferences: {
@@ -77,10 +76,10 @@ declare const CHECKOUT_BOX_WINDOW_PRELOAD_WEBPACK_ENTRY: string
       mainWindowAdmin.on('ready-to-show', () => {
         loginWindow.destroy()
         mainWindowAdmin.show()
+        mainWindowAdmin.webContents.openDevTools()
       })
       ipcMain.once('get-user', event => event.returnValue = user)
       mainWindowAdmin.loadURL(CHECKOUT_BOX_WINDOW_WEBPACK_ENTRY)
-      mainWindowAdmin.webContents.openDevTools()
     })
   }
   app.whenReady().then(createWindow)

@@ -13,21 +13,23 @@ if (process.env.HOME) {
 if (!fs.existsSync(pathDatabase)) {
   fs.writeFileSync(pathDatabase, '', { encoding: 'utf-8' })
 }
+const pathAuthFile = path.resolve(__dirname, '..', 'us.a')
+if (!fs.existsSync(pathAuthFile)) {
+  fs.writeFileSync(pathAuthFile, Encryptor.encode('admin', 'root'), { encoding: 'utf8' })
+}
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const sqlite3 = require('sqlite3').verbose()
 const db: Database = new sqlite3.Database(pathDatabase)
-db.run('CREATE TABLE IF NOT EXISTS "' + NAME_TABLE + '" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "userName"	varchar(50), "name"	varchar(50), "hashPass"	varchar(255), "disabled"	BOOLEAN );')
+db.run('CREATE TABLE IF NOT EXISTS "' + NAME_TABLE + '" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "userName"	varchar(50), "name"	varchar(50), "hashPass"	varchar(255), "disabled"	BOOLEAN, "active"	BOOLEAN );')
 const auth: Auth = {
   enter: async (userName, password, isAdmin) => {
     if (isAdmin) {
-      if (userName === 'root') {
-        if (password === 'root') {
-          ipcRenderer.sendSync('open-main-window')
-        } else {
-          throw new Error("La contraseña es incorrecta!")
-        }
+      const contentFile = fs.readFileSync(pathAuthFile, { encoding: 'utf8' })
+      const result = Encryptor.decode(contentFile, password)
+      if (result === userName) {
+        ipcRenderer.sendSync('open-main-window')
       } else {
-        throw new Error("Nombre de usuario incorrecto!")
+        throw new Error("El nombre de usuario o la cotraseña es incorrecta!")
       }
     } else {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
