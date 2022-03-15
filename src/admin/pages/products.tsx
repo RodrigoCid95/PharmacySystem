@@ -45,8 +45,8 @@ export default class ProductsPage extends React.Component<object, ProductsPageSt
       openDeleteAlert: false
     }
   }
-  async componentDidMount() {
-    await this.loadProducts()
+  componentDidMount() {
+    this.loadProducts()
   }
   private async loadProducts() {
     this.setState({ loading: 'Cargando lista de productos ...' })

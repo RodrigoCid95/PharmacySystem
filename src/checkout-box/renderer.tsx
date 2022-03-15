@@ -1,26 +1,28 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { mergeStyles } from '@fluentui/react/lib/Styling'
+import { getTheme, mergeStyles } from '@fluentui/react/lib/Styling'
 import { IStackTokens, Stack } from '@fluentui/react/lib/Stack'
 import { Text } from '@fluentui/react/lib/Text'
-import { ProductFinder } from './components/finder'
-import { Item, ProductsAPI } from './API/products/types'
+import { initializeIcons } from '@fluentui/react/lib/Icons'
 import { FocusZone, FocusZoneDirection } from '@fluentui/react/lib/FocusZone'
 import { DetailsRow, SelectionMode } from '@fluentui/react/lib/DetailsList'
 import { getRTLSafeKeyCode, KeyCodes } from '@fluentui/react/lib/Utilities'
 import { DefaultButton, IconButton } from '@fluentui/react/lib/Button'
 import { SpinButton } from '@fluentui/react/lib/SpinButton'
 import { DocumentCard, DocumentCardTitle } from '@fluentui/react/lib/DocumentCard'
-import { User } from './../admin/API/users/types'
 import Loading from './components/loading'
 import Alert from './components/alert'
-import { initializeIcons } from '@fluentui/react/lib/Icons'
+import Cancel from './components/cancel'
+import { ProductFinder } from './components/finder'
+import { User } from './../admin/API/users/types'
+import { Item, CheckoutAPI } from './API/types'
 
 declare const getUser: () => void
 declare const user: User
-declare const products: ProductsAPI
+declare const checkout: CheckoutAPI
 
 initializeIcons('./fonts/')
+const theme = getTheme()
 
 const stackTokens: IStackTokens = { childrenGap: 15 }
 
@@ -40,6 +42,7 @@ interface CheckoutBoxState {
   items: Item[]
   isOpenHelp: boolean
   isOpenLoad: boolean
+  isOpenCancel: boolean
 }
 class CheckoutBox extends React.Component<object, CheckoutBoxState> {
   constructor(props: object) {
@@ -48,7 +51,8 @@ class CheckoutBox extends React.Component<object, CheckoutBoxState> {
       isOpenFinder: false,
       items: [],
       isOpenHelp: false,
-      isOpenLoad: false
+      isOpenLoad: false,
+      isOpenCancel: false
     }
   }
   componentDidMount() {
@@ -62,10 +66,16 @@ class CheckoutBox extends React.Component<object, CheckoutBoxState> {
           e.preventDefault()
           if (this.state.items.length > 0) {
             this.setState({ isOpenLoad: true })
-            await products.checkout(this.state.items, user.id || 0)
+            await checkout.checkout(this.state.items, user.id || 0)
             this.setState({ isOpenLoad: false, items: [] })
           } else {
             this.setState({ isOpenHelp: true })
+          }
+          return false
+        case 'F4':
+          e.preventDefault()
+          if (!this.state.isOpenCancel) {
+            this.setState({ isOpenCancel: true })
           }
           return false
         default:
@@ -96,7 +106,7 @@ class CheckoutBox extends React.Component<object, CheckoutBoxState> {
     }
   }
   render() {
-    const { isOpenFinder, items, isOpenHelp, isOpenLoad } = this.state
+    const { isOpenFinder, items, isOpenHelp, isOpenLoad, isOpenCancel } = this.state
     return (
       <Stack
         className={mergeStyles({
@@ -107,8 +117,24 @@ class CheckoutBox extends React.Component<object, CheckoutBoxState> {
         })}
         tokens={stackTokens}
       >
-        <Stack horizontal>
+        <Stack horizontal className={mergeStyles({justifyContent: 'space-between'})}>
           <Text variant="xLarge">Farmacia de Jesús - {user.name}</Text>
+          <IconButton
+            styles={{
+              root: {
+                color: theme.palette.neutralPrimary,
+                marginLeft: 'auto',
+                marginTop: '4px',
+                marginRight: '2px',
+              },
+              rootHovered: {
+                color: theme.palette.neutralDark,
+              },
+            }}
+            iconProps={{ iconName: 'Cancel' }}
+            ariaLabel="Cerrar"
+            onClick={() => window.close()}
+          />
         </Stack>
         <Stack>
           <Text variant="xxLargePlus">Caja</Text>
@@ -162,7 +188,7 @@ class CheckoutBox extends React.Component<object, CheckoutBoxState> {
                           onChange={(e, newValue) => {
                             const l = items
                             l[index].count = parseInt(newValue || '1')
-                            l[index].subTotal = (l[index].count * l[index].realStock)
+                            l[index].subTotal = (l[index].count * l[index].price)
                             this.setState({ items: l })
                           }}
                         />
@@ -204,29 +230,28 @@ class CheckoutBox extends React.Component<object, CheckoutBoxState> {
             </Stack>
           </React.Fragment>
         )}
-        {
-          isOpenFinder && (
-            <ProductFinder onDismiss={this.addItem.bind(this)} />
-          )
-        }
-        {
-          isOpenHelp && (
-            <Alert
-              title='Si productos por cobrar'
-              onDismiss={() => this.setState({ isOpenHelp: false })}
-            >
-              <Stack className={mergeStyles({ marginBottom: '1rem' })}>
-                <Text variant="xLarge">No hay productos en la lista para cobrar, utiliza la tecla "F3" para buscar un producto y añadirlo a la lista.</Text>
-              </Stack>
-              <Stack horizontal horizontalAlign="center">
-                <DefaultButton
-                  text='Aceptar'
-                  onClick={() => this.setState({ isOpenHelp: false })}
-                />
-              </Stack>
-            </Alert>
-          )
-        }
+        {isOpenFinder && (
+          <ProductFinder onDismiss={this.addItem.bind(this)} />
+        )}
+        {isOpenHelp && (
+          <Alert
+            title='Si productos por cobrar'
+            onDismiss={() => this.setState({ isOpenHelp: false })}
+          >
+            <Stack className={mergeStyles({ marginBottom: '1rem' })}>
+              <Text variant="xLarge">No hay productos en la lista para cobrar, utiliza la tecla "F3" para buscar un producto y añadirlo a la lista.</Text>
+            </Stack>
+            <Stack horizontal horizontalAlign="center">
+              <DefaultButton
+                text='Aceptar'
+                onClick={() => this.setState({ isOpenHelp: false })}
+              />
+            </Stack>
+          </Alert>
+        )}
+        {isOpenCancel && (
+          <Cancel onDismiss={() => this.setState({ isOpenCancel: false })} />
+        )}
       </Stack >
     )
   }

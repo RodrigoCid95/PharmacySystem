@@ -9,7 +9,7 @@ import { AppAPI } from './types'
 import { DataProduct } from './../products/types'
 import { BarCode } from './../barCodes/types'
 import { DataUser } from './../users/types'
-import { Buy } from './../buys/types'
+import { Sale } from '../sales/types'
 const pathAuthFile = path.resolve(__dirname, '..', 'us.a')
 export default (db: Database) => {
   const appAPI: AppAPI = {
@@ -90,7 +90,7 @@ export default (db: Database) => {
         const dataProducts: DataProduct[] = JSON.parse(fs.readFileSync(pathProducts, { encoding: 'utf8' }))
         const dataBarCodes: BarCode[] = JSON.parse(fs.readFileSync(pathBarCodes, { encoding: 'utf8' }))
         const dataUsers: DataUser[] = JSON.parse(fs.readFileSync(pathUsers, { encoding: 'utf8' }))
-        const dataBuys: Buy[] = JSON.parse(fs.readFileSync(pathBuys, { encoding: 'utf8' }))
+        const dataBuys: Sale[] = JSON.parse(fs.readFileSync(pathBuys, { encoding: 'utf8' }))
         await new Promise(resolve => db.run('delete from "Products"', resolve))
         await new Promise(resolve => db.run('delete from "BarCodes"', resolve))
         await new Promise(resolve => db.run('delete from "Users"', resolve))

@@ -34,6 +34,7 @@ mergeStyles({
 const IndexPage = React.lazy(() => import('./pages/index'))
 const UsersPage = React.lazy(() => import('./pages/users'))
 const ProductsPage = React.lazy(() => import('./pages/products'))
+const SalesHistory = React.lazy(() => import('./pages/salesHistory'))
 const BarCodesPage = React.lazy(() => import('./pages/barCodes'))
 interface MenuProps {
   isOpen: boolean
@@ -116,6 +117,16 @@ const Menu: React.FC<MenuProps> = ({ isOpen, dismissPanel, onChangeTitle, onChan
           Códigos de barras
         </ActionButton>
         <ActionButton
+          iconProps={{ iconName: 'ShopServer' }}
+          onClick={() => {
+            navigate('/admin/sales-history')
+            dismissPanel()
+            onChangeTitle('Historial de ventas')
+          }}
+        >
+          Historial de ventas
+        </ActionButton>
+        <ActionButton
           iconProps={{ iconName: 'Signin' }}
           onClick={() => {
             onChangeCredentials()
@@ -128,7 +139,6 @@ const Menu: React.FC<MenuProps> = ({ isOpen, dismissPanel, onChangeTitle, onChan
     </Panel>
   )
 }
-
 const AdminDashboard: React.FC = () => {
   const [isOpenMenu, { setTrue: openMenu, setFalse: dismissMenu }] = useBoolean(false)
   const [isOpenChangeCredentials, { setTrue: openChangeCredentials, setFalse: dismissChangeCredentials }] = useBoolean(false)
@@ -176,6 +186,11 @@ const AdminDashboard: React.FC = () => {
                 <Route path="/admin/products" element={
                   <React.Suspense fallback={<Loading />}>
                     <ProductsPage />
+                  </React.Suspense>
+                } />
+                <Route path="/admin/sales-history" element={
+                  <React.Suspense fallback={<Loading />}>
+                    <SalesHistory />
                   </React.Suspense>
                 } />
                 <Route path="/admin/bar-codes" element={

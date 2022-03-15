@@ -3,10 +3,10 @@ import { contextBridge, ipcRenderer } from "electron"
 import { Database } from 'sqlite3'
 import fs from 'fs'
 const NAME_TABLE = 'BarCodes'
-export default async (db: Database) => {
+export default (db: Database) => {
   const barCodesAPI: BarCodesAPI = {
     create: ({ name, value }) => new Promise((resolve, reject) => {
-      db.run('insert into "' + NAME_TABLE + '" (name, value) values (?, ?)', [name, value], (error) => {
+      db.run(`insert into "${NAME_TABLE}" (name, value) values (?, ?)`, [name, value], (error) => {
         if (error) {
           reject()
         } else {
@@ -15,7 +15,7 @@ export default async (db: Database) => {
       })
     }),
     read: () => new Promise((resolve, reject) => {
-      db.all('select * from "' + NAME_TABLE + '"', (error, rows) => {
+      db.all(`select * from "${NAME_TABLE}"`, (error, rows) => {
         if (error) {
           reject()
         } else {
@@ -24,7 +24,7 @@ export default async (db: Database) => {
       })
     }),
     update: ({ name, value }) => new Promise((resolve, reject) => {
-      db.run('update "' + NAME_TABLE + '" set name = ?, value = ?', [name, value], error => {
+      db.run(`update "${NAME_TABLE}" set name = ?, value = ?`, [name, value], error => {
         if (error) {
           reject()
         } else {
@@ -33,7 +33,7 @@ export default async (db: Database) => {
       })
     }),
     delete: id => new Promise((resolve, reject) => {
-      db.run('delete from "' + NAME_TABLE + '" where id = ?', [id], error => {
+      db.run(`delete from "${NAME_TABLE}" where id = ?`, [id], error => {
         if (error) {
           reject()
         } else {

@@ -41,6 +41,7 @@ const SignIn: React.FC = () => {
           label="Nombre de usuario:"
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           onChange={(e: any) => setUserName(e.target.value)}
+          autoFocus
         />
         <TextField
           label="Contraseña:"

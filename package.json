@@ -58,7 +58,7 @@
                   "html": "./src/login/index.html",
                   "js": "./src/login/renderer.tsx",
                   "preload": {
-                    "js": "./src/login/API/index.ts"
+                    "js": "./src/login/API.ts"
                   },
                   "name": "login_window"
                 },

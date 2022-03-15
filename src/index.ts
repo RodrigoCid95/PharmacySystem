@@ -18,6 +18,7 @@ declare const CHECKOUT_BOX_WINDOW_PRELOAD_WEBPACK_ENTRY: string
       minimizable: false,
       show: false,
       title: 'Iniciar sesión',
+      autoHideMenuBar: true,
       webPreferences: {
         preload: LOGIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
         nodeIntegration: true,
@@ -26,15 +27,18 @@ declare const CHECKOUT_BOX_WINDOW_PRELOAD_WEBPACK_ENTRY: string
     })
     loginWindow.on('ready-to-show', () => {
       loginWindow.show()
+      /* loginWindow.webContents.openDevTools() */
     })
     loginWindow.loadURL(LOGIN_WINDOW_WEBPACK_ENTRY)
     ipcMain.on('reset', () => app.relaunch())
     ipcMain.on('open-main-window', () => {
       const adminWindow = new BrowserWindow({
-        height: 600,
-        width: 800,
+        minHeight: 600,
+        minWidth: 800,
+        fullscreen: true,
         show: false,
         title: 'Pharmacy System',
+        autoHideMenuBar: true,
         webPreferences: {
           preload: ADMIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
           nodeIntegration: true,
@@ -44,6 +48,7 @@ declare const CHECKOUT_BOX_WINDOW_PRELOAD_WEBPACK_ENTRY: string
       adminWindow.on('ready-to-show', () => {
         loginWindow.destroy()
         adminWindow.show()
+        adminWindow.webContents.openDevTools()
       })
       adminWindow.loadURL(ADMIN_WINDOW_WEBPACK_ENTRY)
       ipcMain.on('open-save-dialog', (e, filters) => {
@@ -63,10 +68,12 @@ declare const CHECKOUT_BOX_WINDOW_PRELOAD_WEBPACK_ENTRY: string
     })
     ipcMain.on('open-checkout-box-window', (_, user) => {
       const mainWindowAdmin = new BrowserWindow({
-        minHeight: 700,
+        minHeight: 800,
+        minWidth: 800,
         fullscreen: true,
         show: false,
         title: 'Pharmacy System - Caja',
+        autoHideMenuBar: true,
         webPreferences: {
           preload: CHECKOUT_BOX_WINDOW_PRELOAD_WEBPACK_ENTRY,
           nodeIntegration: true,

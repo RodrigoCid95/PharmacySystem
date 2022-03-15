@@ -1,4 +1,4 @@
-export type Buy = {
+export type Sale = {
   id?: number
   id_user: number
   id_product: number
@@ -6,4 +6,3 @@ export type Buy = {
   count: number
   total: number
 }
-export default null
