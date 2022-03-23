@@ -5,13 +5,13 @@ import { useBoolean } from '@fluentui/react-hooks'
 import { mergeStyles } from '@fluentui/react/lib/Styling'
 import { IStackTokens, Stack } from '@fluentui/react/lib/Stack'
 import { Text } from '@fluentui/react/lib/Text'
-import { ActionButton, DefaultButton, IconButton, PrimaryButton } from '@fluentui/react/lib/Button'
+import { ActionButton, DefaultButton, IconButton } from '@fluentui/react/lib/Button'
 import { Panel, PanelType } from '@fluentui/react/lib/Panel'
-import { initializeIcons } from '@fluentui/font-icons-mdl2'
+import { ITextField, TextField } from '@fluentui/react/lib/TextField'
+import { initializeIcons } from '@fluentui/react/lib/Icons'
 import Loading from './components/loading'
 import Alert from './components/alert'
 import { AppAPI } from './API/app/types'
-import { ITextField, TextField } from '@fluentui/react'
 
 declare const app: AppAPI
 
@@ -25,16 +25,12 @@ mergeStyles({
     padding: 0,
     boxSazing: 'border-box',
     height: '100%',
-  },
-  ':global(#root)': {
-    height: '95%',
-  },
+  }
 })
 
 const IndexPage = React.lazy(() => import('./pages/index'))
 const UsersPage = React.lazy(() => import('./pages/users'))
 const ProductsPage = React.lazy(() => import('./pages/products'))
-const SalesHistory = React.lazy(() => import('./pages/salesHistory'))
 const BarCodesPage = React.lazy(() => import('./pages/barCodes'))
 interface MenuProps {
   isOpen: boolean
@@ -47,29 +43,45 @@ const Menu: React.FC<MenuProps> = ({ isOpen, dismissPanel, onChangeTitle, onChan
   const navigate = useNavigate()
   const onRenderFooterContent = React.useCallback(
     () => (
-      <Stack className={mergeStyles({ flexDirection: 'row' })}>
-        <PrimaryButton
-          onClick={() => {
-            onChangeLoading('Creando copia de seguridad ...')
-            app.createBackup().then(() => {
-              onChangeLoading('')
-            })
+      <Stack className={mergeStyles({ display: 'flex', alignItems: 'center' })}>
+        <DefaultButton
+          primary
+          text='Cerrar'
+          onClick={() => window.close()}
+          split
+          menuProps={{
+            items: [
+              {
+                key: 'createBackup',
+                text: 'Crear copia de seguridad',
+                iconProps: { iconName: 'Add' },
+                onClick: () => {
+                  onChangeLoading('Creando copia de seguridad ...')
+                  app.createBackup().then(() => {
+                    onChangeLoading('')
+                  }).catch(error => {
+                    console.error(error)
+                    onChangeLoading('')
+                  })
+                }
+              },
+              {
+                key: 'restoreBackup',
+                text: 'Restaurar copia de seguridad',
+                iconProps: { iconName: 'Refresh' },
+                onClick: () => {
+                  onChangeLoading('Restaurando copia de seguridad ...')
+                  app.restoreBackup().then(() => {
+                    onChangeLoading('')
+                  }).catch(error => {
+                    console.error(error)
+                    onChangeLoading('')
+                  })
+                }
+              }
+            ]
           }}
-          styles={{ root: { marginRight: 8 } }}
-        >
-          Crear backup
-        </PrimaryButton>
-        <PrimaryButton
-          onClick={() => {
-            onChangeLoading('Restaurando copia de seguridad ...')
-            app.restoreBackup().then(() => {
-              onChangeLoading('')
-            })
-          }}
-          styles={{ root: { marginRight: 8 } }}
-        >
-          Restaurar backup
-        </PrimaryButton>
+        />
       </Stack>
     ),
     [navigate]
@@ -86,6 +98,16 @@ const Menu: React.FC<MenuProps> = ({ isOpen, dismissPanel, onChangeTitle, onChan
       isFooterAtBottom
     >
       <Stack className={mergeStyles({ marginTop: '1rem' })}>
+        <ActionButton
+          iconProps={{ iconName: 'Home' }}
+          onClick={() => {
+            navigate('/')
+            dismissPanel()
+            onChangeTitle('Inicio')
+          }}
+        >
+          Inicio
+        </ActionButton>
         <ActionButton
           iconProps={{ iconName: 'People' }}
           onClick={() => {
@@ -117,16 +139,6 @@ const Menu: React.FC<MenuProps> = ({ isOpen, dismissPanel, onChangeTitle, onChan
           Códigos de barras
         </ActionButton>
         <ActionButton
-          iconProps={{ iconName: 'ShopServer' }}
-          onClick={() => {
-            navigate('/admin/sales-history')
-            dismissPanel()
-            onChangeTitle('Historial de ventas')
-          }}
-        >
-          Historial de ventas
-        </ActionButton>
-        <ActionButton
           iconProps={{ iconName: 'Signin' }}
           onClick={() => {
             onChangeCredentials()
@@ -143,16 +155,17 @@ const AdminDashboard: React.FC = () => {
   const [isOpenMenu, { setTrue: openMenu, setFalse: dismissMenu }] = useBoolean(false)
   const [isOpenChangeCredentials, { setTrue: openChangeCredentials, setFalse: dismissChangeCredentials }] = useBoolean(false)
   const [labelLoading, setLabelLoading] = React.useState('')
-  const [title, setTitle] = React.useState('')
+  const [title, setTitle] = React.useState('Inicio')
   const userNameRef = React.useRef<ITextField>(null)
   const passwordRef = React.useRef<ITextField>(null)
   return (
     <Stack
       className={mergeStyles({
         width: '100%',
-        height: '100%',
+        height: 'calc(100% - 2rem)',
         color: '#605e5c',
-        padding: '1rem'
+        padding: '1rem',
+        display: 'block'
       })}
       tokens={stackTokens}
     >
@@ -163,7 +176,7 @@ const AdminDashboard: React.FC = () => {
             <IconButton iconProps={{ iconName: 'CollapseMenu' }} title="Menú" ariaLabel="Menú" onClick={openMenu} />
             <Text variant="xLarge">Administrador{title === '' ? '' : ` - ${title}`}</Text>
           </Stack>
-          <Stack className={mergeStyles({ height: '100%' })}>
+          <Stack className={mergeStyles({ height: '100%', marginTop: 'unset' })}>
             <MemoryRouter>
               <Menu
                 isOpen={isOpenMenu}
@@ -186,11 +199,6 @@ const AdminDashboard: React.FC = () => {
                 <Route path="/admin/products" element={
                   <React.Suspense fallback={<Loading />}>
                     <ProductsPage />
-                  </React.Suspense>
-                } />
-                <Route path="/admin/sales-history" element={
-                  <React.Suspense fallback={<Loading />}>
-                    <SalesHistory />
                   </React.Suspense>
                 } />
                 <Route path="/admin/bar-codes" element={

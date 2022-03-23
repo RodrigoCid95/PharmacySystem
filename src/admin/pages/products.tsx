@@ -99,10 +99,29 @@ export default class ProductsPage extends React.Component<object, ProductsPageSt
     if (props) {
       const { stock, minStock } = (props.item as Product)
       if (stock === 0) {
-        return <DetailsRow {...props} className={mergeStyles({ backgroundColor: theme.palette.red, color: theme.palette.white })} />
+        return (
+          <DetailsRow
+            {...props}
+            className={mergeStyles({
+              backgroundColor: '#ffe3e6',
+              ':hover': { backgroundColor: '#ffe3e6' },
+              ':focus': { backgroundColor: '#ffe3e6' },
+              ':focus:hover': { backgroundColor: '#ffe3e6' }
+            })}
+          />
+        )
       }
       if (stock < minStock) {
-        return <DetailsRow {...props} className={mergeStyles({ backgroundColor: theme.palette.yellowLight })} />
+        return (
+          <DetailsRow
+            {...props}
+            className={mergeStyles({
+              backgroundColor: theme.palette.yellowLight,
+              ':hover': { backgroundColor: theme.palette.yellowLight },
+              ':focus': { backgroundColor: theme.palette.yellowLight },
+              ':focus:hover': { backgroundColor: theme.palette.yellowLight },
+            })} />
+        )
       } else {
         return <DetailsRow {...props} />
       }

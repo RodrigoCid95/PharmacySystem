@@ -1,6 +1,5 @@
 import React from 'react'
-import { useId } from '@fluentui/react-hooks/lib/useId'
-import { useBoolean } from '@fluentui/react-hooks/lib/useBoolean'
+import { useId, useBoolean } from '@fluentui/react-hooks'
 import { FontWeights, getFocusStyle, getTheme, mergeStyleSets } from '@fluentui/react/lib/Styling'
 import { Modal } from '@fluentui/react/lib/Modal'
 import { Toggle } from '@fluentui/react/lib/Toggle'

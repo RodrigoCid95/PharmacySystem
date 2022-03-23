@@ -1,9 +1,9 @@
+import React from 'react'
+import { FontWeights, getTheme } from '@fluentui/style-utilities'
 import { IButtonStyles, IconButton } from '@fluentui/react/lib/Button'
 import { Modal } from '@fluentui/react/lib/Modal'
 import { Stack } from '@fluentui/react/lib/Stack'
 import { mergeStyleSets } from '@fluentui/react/lib/Styling'
-import { FontWeights, getTheme } from '@fluentui/style-utilities/lib/styles'
-import React from 'react'
 const theme = getTheme()
 const contentStyles = mergeStyleSets({
   container: {

@@ -22,8 +22,8 @@ declare const user: User
 declare const checkout: CheckoutAPI
 
 initializeIcons('./fonts/')
-const theme = getTheme()
 
+const theme = getTheme()
 const stackTokens: IStackTokens = { childrenGap: 15 }
 
 mergeStyles({
@@ -32,11 +32,9 @@ mergeStyles({
     padding: 0,
     boxSazing: 'border-box',
     height: '100%',
-  },
-  ':global(#root)': {
-    height: '100%',
-  },
+  }
 })
+
 interface CheckoutBoxState {
   isOpenFinder: boolean
   items: Item[]
@@ -235,11 +233,11 @@ class CheckoutBox extends React.Component<object, CheckoutBoxState> {
         )}
         {isOpenHelp && (
           <Alert
-            title='Si productos por cobrar'
+            title='Caja vacía!'
             onDismiss={() => this.setState({ isOpenHelp: false })}
           >
             <Stack className={mergeStyles({ marginBottom: '1rem' })}>
-              <Text variant="xLarge">No hay productos en la lista para cobrar, utiliza la tecla "F3" para buscar un producto y añadirlo a la lista.</Text>
+              <Text variant="xLarge">Añade productos a la caja utilizando la tecla "F3".</Text>
             </Stack>
             <Stack horizontal horizontalAlign="center">
               <DefaultButton

@@ -83,7 +83,7 @@ declare const CHECKOUT_BOX_WINDOW_PRELOAD_WEBPACK_ENTRY: string
       mainWindowAdmin.on('ready-to-show', () => {
         loginWindow.destroy()
         mainWindowAdmin.show()
-        mainWindowAdmin.webContents.openDevTools()
+        /* mainWindowAdmin.webContents.openDevTools() */
       })
       ipcMain.once('get-user', event => event.returnValue = user)
       mainWindowAdmin.loadURL(CHECKOUT_BOX_WINDOW_WEBPACK_ENTRY)

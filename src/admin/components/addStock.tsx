@@ -1,11 +1,11 @@
 import React from 'react'
+import { useBoolean } from '@fluentui/react-hooks'
 import { DefaultButton } from '@fluentui/react/lib/Button'
 import { mergeStyles } from '@fluentui/react/lib/Styling'
-import { useBoolean } from '@fluentui/react-hooks/lib/useBoolean'
-import Alert from './alert'
-import Loading from './loading'
 import { SpinButton, ISpinButton } from '@fluentui/react/lib/SpinButton'
 import { Stack } from '@fluentui/react/lib/Stack'
+import Alert from './alert'
+import Loading from './loading'
 import { ProductsAPI, Product } from './../API/products/types'
 declare const products: ProductsAPI
 interface AddStockProps {

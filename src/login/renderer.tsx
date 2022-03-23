@@ -5,7 +5,7 @@ import { TextField } from '@fluentui/react/lib/TextField'
 import { DefaultButton } from '@fluentui/react/lib/Button'
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar'
 import { mergeStyles } from '@fluentui/react/lib/Styling'
-import { initializeIcons } from '@fluentui/font-icons-mdl2'
+import { initializeIcons } from '@fluentui/react/lib/Icons'
 import { Auth } from './API'
 
 initializeIcons('./fonts/')

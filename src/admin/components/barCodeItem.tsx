@@ -1,5 +1,5 @@
 import React from 'react'
-import { useBoolean } from '@fluentui/react-hooks/lib/useBoolean'
+import { useBoolean } from '@fluentui/react-hooks'
 import { mergeStyles } from '@fluentui/react/lib/Styling'
 import { DocumentCard, DocumentCardActions } from '@fluentui/react/lib/DocumentCard'
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner'
@@ -21,6 +21,7 @@ const BarCodeItem: React.FC<BarCodeItemProps> = ({ data, onReload }) => {
     setSpinnerLabel('Eliminando ...')
     barCodes.delete(id).then(onReload)
   }, [id, onReload])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const _handlerOnDownload = React.useCallback(() => barCodes.saveFromDisk(document.getElementById(`bar-code-${id}`) as any), [id])
   const renderBarCode = React.useCallback((ref: HTMLCanvasElement) => {
     if (ref) {
@@ -55,6 +56,7 @@ const BarCodeItem: React.FC<BarCodeItemProps> = ({ data, onReload }) => {
                 defaultValue={name}
                 autoFocus
                 onBlur={e => _handlerUpddate(e.target.value)}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 onKeyUp={(e: any) => {
                   if (e.key === 'Enter') {
                     _handlerUpddate(e.target.value)
