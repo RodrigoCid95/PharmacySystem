@@ -1,8 +1,8 @@
 {
   "name": "pharmacy-system",
-  "productName": "Pharmacy System",
-  "version": "1.7.506",
-  "description": "My Electron application description",
+  "productName": "Farmacia de Jesús",
+  "version": "1.7.6",
+  "description": "Sistema de ventas, Farmacia de Jesús",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -16,12 +16,15 @@
   "license": "MIT",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "executableName": "pharmacy-system",
+        "name": "pharmacy-system"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "pharmacy_system"
+            "name": "pharmacy-system"
           }
         },
         {
@@ -32,11 +35,15 @@
         },
         {
           "name": "@electron-forge/maker-deb",
-          "config": {}
+          "config": {
+            "name": "pharmacy-system"
+          }
         },
         {
           "name": "@electron-forge/maker-rpm",
-          "config": {}
+          "config": {
+            "name": "pharmacy-system"
+          }
         }
       ],
       "plugins": [
