@@ -35,32 +35,33 @@ export const ProductFinder: React.FC<{ onDismiss: (product?: Item) => void }> = 
         <span id={titleId}>Buscar producto</span>
       </div>
       <div className={contentStyles.body}>
+        <TextField
+          placeholder={searchType ? 'Escribe un nombre ...' : 'Escribe o escanea un SKU ...'}
+          onRenderLabel={() => (
+            <Toggle
+              offText='Buscar por sku'
+              onText='Buscar por nombre'
+              checked={searchType}
+              onChange={toggleSearchBoolean}
+            />
+          )}
+          onKeyUp={async e => {
+            if (e.code === 'Enter') {
+              showLoading()
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const result = await checkout.findProduct(e.currentTarget.value, searchType)
+              setItems(result.map(product => ({ ...product, count: 1, subTotal: product.price })))
+              hideLoading()
+              focusZoneRef.current?.focus(true)
+            }
+          }}
+        />
         {loading && <Loading label="Buscando producto..." />}
         {!loading && (
           <FocusZone
             direction={FocusZoneDirection.vertical}
             ref={focusZoneRef}
           >
-            <TextField
-              placeholder={searchType ? 'Escribe un nombre ...' : 'Escribe o escanea un SKU ...'}
-              onRenderLabel={() => (
-                <Toggle
-                  offText='Buscar por sku'
-                  onText='Buscar por nombre'
-                  checked={searchType}
-                  onChange={toggleSearchBoolean}
-                />
-              )}
-              onKeyUp={async e => {
-                if (e.code === 'Enter') {
-                  showLoading()
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  const result = await checkout.findProduct(e.currentTarget.value, searchType)
-                  setItems(result.map(product => ({ ...product, count: 1, subTotal: product.price })))
-                  hideLoading()
-                }
-              }}
-            />
             <List
               items={items}
               onFocus={e => {

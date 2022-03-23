@@ -9,7 +9,6 @@ import { DetailsRow, SelectionMode } from '@fluentui/react/lib/DetailsList'
 import { getRTLSafeKeyCode, KeyCodes } from '@fluentui/react/lib/Utilities'
 import { DefaultButton, IconButton } from '@fluentui/react/lib/Button'
 import { SpinButton } from '@fluentui/react/lib/SpinButton'
-import { DocumentCard, DocumentCardTitle } from '@fluentui/react/lib/DocumentCard'
 import Loading from './components/loading'
 import Alert from './components/alert'
 import Cancel from './components/cancel'
@@ -115,8 +114,13 @@ class CheckoutBox extends React.Component<object, CheckoutBoxState> {
         })}
         tokens={stackTokens}
       >
-        <Stack horizontal className={mergeStyles({justifyContent: 'space-between'})}>
-          <Text variant="xLarge">Farmacia de Jesús - {user.name}</Text>
+        <Stack horizontal className={mergeStyles({ justifyContent: 'space-between' })}>
+          <Text variant='xLarge'>Farmacia de Jesús - {user.name}</Text>
+          <Text variant='xLarge'>{`Total: $${(() => {
+            let total = 0
+            items.forEach(item => total += item.subTotal)
+            return total.toString()
+          })()}`}</Text>
           <IconButton
             styles={{
               root: {
@@ -142,7 +146,7 @@ class CheckoutBox extends React.Component<object, CheckoutBoxState> {
         ) : (
           <React.Fragment>
             <FocusZone
-              className={mergeStyles({ height: '100%', maxHeight: '80%', overflowY: 'auto' })}
+              className={mergeStyles({ height: '100%', overflowY: 'auto' })}
               direction={FocusZoneDirection.vertical}
               isCircularNavigation
               shouldEnterInnerZone={ev => ev.which === getRTLSafeKeyCode(KeyCodes.right)}
@@ -217,15 +221,6 @@ class CheckoutBox extends React.Component<object, CheckoutBoxState> {
                 />
               ))}
             </FocusZone>
-            <Stack className={mergeStyles({ flexDirection: 'row', justifyContent: 'flex-end' })}>
-              <DocumentCard>
-                <DocumentCardTitle title={`Total: $${(() => {
-                  let total = 0
-                  items.forEach(item => total += item.subTotal)
-                  return total.toString()
-                })()}`} />
-              </DocumentCard>
-            </Stack>
           </React.Fragment>
         )}
         {isOpenFinder && (
