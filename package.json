@@ -125,16 +125,15 @@
     "@fluentui/react": "^8.62.0",
     "@fluentui/react-hooks": "^8.5.3",
     "archiver": "^5.3.0",
-    "chart.js": "^3.7.1",
     "electron-squirrel-startup": "^1.0.0",
     "file-loader": "^6.2.0",
     "jsbarcode": "^3.11.5",
     "json2xls": "^0.1.2",
     "react": "^17.0.2",
-    "react-chartjs-2": "^4.0.1",
     "react-dom": "^17.0.2",
     "react-router-dom": "^6.2.2",
     "sqlite3": "^5.0.2",
-    "unzipper": "^0.10.11"
+    "unzipper": "^0.10.11",
+    "victory": "^36.3.1"
   }
 }

@@ -6,8 +6,7 @@ export type DataSale = {
   count: number
   total: number
 }
-export type Sale = {
-  id: number
+export type DataDatum = {
   idUser: number
   userName: string
   productName: string
@@ -15,7 +14,21 @@ export type Sale = {
   count: number
   total: number
 }
+export type Sale = {
+  productName: string
+  date: {
+    day: string
+    hour: string
+  }
+  count: number
+  total: number
+}
+export type Datum = {
+  idUser: number
+  userName: string
+  sales: Sale[]
+}
 export type SalesAPI = {
-  find: (range: string[] | string) => Promise<Sale[]>
-  export: (data: Sale[]) => void
+  find: (range: string[] | string) => Promise<Datum[]>
+  export: (data: Datum[]) => void
 }

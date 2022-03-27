@@ -48,7 +48,7 @@ declare const CHECKOUT_BOX_WINDOW_PRELOAD_WEBPACK_ENTRY: string
       adminWindow.on('ready-to-show', () => {
         loginWindow.destroy()
         adminWindow.show()
-        adminWindow.webContents.openDevTools()
+        /* adminWindow.webContents.openDevTools() */
       })
       adminWindow.loadURL(ADMIN_WINDOW_WEBPACK_ENTRY)
       ipcMain.on('open-save-dialog', (e, filters) => {

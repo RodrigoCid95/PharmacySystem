@@ -176,7 +176,7 @@ const AdminDashboard: React.FC = () => {
             <IconButton iconProps={{ iconName: 'CollapseMenu' }} title="Menú" ariaLabel="Menú" onClick={openMenu} />
             <Text variant="xLarge">Administrador{title === '' ? '' : ` - ${title}`}</Text>
           </Stack>
-          <Stack className={mergeStyles({ height: '100%', marginTop: 'unset' })}>
+          <Stack className={mergeStyles({ height: '100%', marginTop: 'unset', overflowY: 'auto' })}>
             <MemoryRouter>
               <Menu
                 isOpen={isOpenMenu}
