@@ -55,11 +55,11 @@ class CheckoutBox extends React.Component<object, CheckoutBoxState> {
   componentDidMount() {
     document.addEventListener('keydown', async e => {
       switch (e.code) {
-        case 'F3':
+        case 'F1':
           e.preventDefault()
           this.setState({ isOpenFinder: true })
           return false
-        case 'F5':
+        case 'F2':
           e.preventDefault()
           if (this.state.items.length > 0) {
             this.setState({ isOpenLoad: true })
@@ -69,7 +69,7 @@ class CheckoutBox extends React.Component<object, CheckoutBoxState> {
             this.setState({ isOpenHelp: true })
           }
           return false
-        case 'F4':
+        case 'F3':
           e.preventDefault()
           if (!this.state.isOpenCancel) {
             this.setState({ isOpenCancel: true })
@@ -232,7 +232,7 @@ class CheckoutBox extends React.Component<object, CheckoutBoxState> {
             onDismiss={() => this.setState({ isOpenHelp: false })}
           >
             <Stack className={mergeStyles({ marginBottom: '1rem' })}>
-              <Text variant="xLarge">Añade productos a la caja utilizando la tecla "F3".</Text>
+              <Text variant="xLarge">Añade productos a la caja utilizando la tecla "F1".</Text>
             </Stack>
             <Stack horizontal horizontalAlign="center">
               <DefaultButton
