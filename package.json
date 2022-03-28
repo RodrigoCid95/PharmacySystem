@@ -17,14 +17,15 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "executableName": "pharmacy-system",
-        "name": "pharmacy-system"
+        "executableName": "Farmacia de Jesús",
+        "name": "Farmacia de Jesús"
       },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "pharmacy-system"
+            "name": "pharmacy-system",
+            "setupExe": "Farmacia de Jesús.exe"
           }
         },
         {
