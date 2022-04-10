@@ -15,73 +15,7 @@
   "author": "Rodrigo Cid",
   "license": "MIT",
   "config": {
-    "forge": {
-      "packagerConfig": {
-        "executableName": "pharmacy-system",
-        "name": "pharmacy-system"
-      },
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "pharmacy-system",
-            "setupExe": "Farmacia de Jesús.exe"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {
-            "options": {
-              "categories": ["Utility"]
-            }
-          }
-        }
-      ],
-      "plugins": [
-        [
-          "@electron-forge/plugin-webpack",
-          {
-            "devServer": {
-              "hot": true,
-              "historyApiFallback": true
-            },
-            "mainConfig": "./webpack.main.config.js",
-            "nodeIntegration": true,
-            "contextIsolation": true,
-            "webSecurity": false,
-            "renderer": {
-              "config": "./webpack.renderer.config.js",
-              "entryPoints": [
-                {
-                  "html": "./src/login/index.html",
-                  "js": "./src/login/renderer.tsx",
-                  "preload": {
-                    "js": "./src/login/API.ts"
-                  },
-                  "name": "login_window"
-                },
-                {
-                  "html": "./src/admin/index.html",
-                  "js": "./src/admin/renderer.tsx",
-                  "preload": {
-                    "js": "./src/admin/API/index.ts"
-                  },
-                  "name": "admin_window"
-                },
-                {
-                  "html": "./src/checkout-box/index.html",
-                  "js": "./src/checkout-box/renderer.tsx",
-                  "preload": {
-                    "js": "./src/checkout-box/API/index.ts"
-                  },
-                  "name": "checkout_box_window"
-                }
-              ]
-            }
-          }
-        ]
-      ]
-    }
+    "forge": "./forge.config.js"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.63",
