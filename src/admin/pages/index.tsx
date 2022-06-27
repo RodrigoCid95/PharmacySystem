@@ -214,6 +214,18 @@ export default class IndexPage extends React.Component<object, IndexPageState> {
               }}
             />
             <VictoryChart
+              domain={[0, (() => {
+                let max = 0
+                for (const line of lines) {
+                  for (const datum of line.data) {
+                    if (datum.y > max) {
+                      max = datum.y
+                    }
+                  }
+                }
+                max = (max - (max % 100)) + 100
+                return max
+              })()]}
               containerComponent={<VictoryVoronoiContainer style={{ width: '50%', height: 'auto', padding: '2%' }} />}
             >
               {lines.map(line => (

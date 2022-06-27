@@ -96,10 +96,11 @@ const Form: React.FC<FormProps> = ({ product, setLoading, onReturnValue, onCance
     products.selectImage(image => {
       if (product) {
         setLoading(true)
-        products.updateThumbnail(product, image).then(thumb => {
-          setThumbnail(thumb)
-          setLoading(false)
-        })
+        products.updateThumbnail(product, image)
+          .then(thumb => {
+            setThumbnail(thumb)
+            setLoading(false)
+          }).catch(error => console.error(error))
       } else {
         setThumbnail(image)
       }
@@ -123,7 +124,7 @@ const Form: React.FC<FormProps> = ({ product, setLoading, onReturnValue, onCance
       setError('Falta el precio')
       return
     }
-    const piecesPerPackage = parseInt(piecesPerPackageRef.current?.value || '0')
+    const piecesPerPackage = parseInt(piecesPerPackageRef.current?.value || '2')
     if (!product && isPackage && piecesPerPackage === 0) {
       setError('Falta definir cuantas piezas contiene cada paquete')
       return
@@ -174,7 +175,7 @@ const Form: React.FC<FormProps> = ({ product, setLoading, onReturnValue, onCance
         <SpinButton componentRef={minStockRef} defaultValue={product?.minStock.toString() || ''} incrementButtonAriaLabel="+" decrementButtonAriaLabel="-" min={0} step={1} label="Stock mínimo" className={mergeStyles({ marginTop: '1rem!important' })} />
         {!product && <Toggle className={mergeStyles({ marginTop: '1rem!important' })} inlineLabel onText="Es un paquete" offText="Es una unidad" onChange={(ev, checked) => setIsPackage(checked || false)} />}
         {isPackage && !product && (
-          <SpinButton componentRef={piecesPerPackageRef} incrementButtonAriaLabel="+" decrementButtonAriaLabel="-" min={1} step={1} label="Piezas por paquete" className={mergeStyles({ marginTop: '1rem 0!important' })} />
+          <SpinButton componentRef={piecesPerPackageRef} incrementButtonAriaLabel="+" decrementButtonAriaLabel="-" min={2} step={1} label="Piezas por paquete" className={mergeStyles({ marginTop: '1rem 0!important' })} />
         )}
       </Stack>
       <Stack horizontal horizontalAlign="space-around">
