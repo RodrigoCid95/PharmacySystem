@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { JSXElementConstructor } from 'react'
 import { Stack } from '@fluentui/react/lib/Stack'
 import { INavLink, Nav } from '@fluentui/react/lib/Nav'
 import { DetailsList, IColumn, IGroup } from '@fluentui/react/lib/DetailsList'
@@ -6,10 +6,14 @@ import { DefaultButton } from '@fluentui/react/lib/Button'
 import { mergeStyles } from '@fluentui/react/lib/Styling'
 import { SalesAPI, Datum, Sale } from '../API/sales/types'
 import Filter from '../components/filter'
-import { VictoryChart, VictoryGroup, VictoryLine, VictoryScatter, VictoryTooltip, VictoryVoronoiContainer } from 'victory'
+import { Background, VictoryChart, VictoryGroup, VictoryLine, VictoryScatter, VictoryTheme, VictoryTooltip, VictoryVoronoiContainer } from 'victory'
+import { LineChart, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line } from 'recharts'
 declare const salesAPI: SalesAPI
 interface DatumItem extends Datum {
-  color: string
+  color: {
+    h: number
+    s: number
+  }
 }
 interface IndexPageState {
   idUser: number
@@ -27,14 +31,22 @@ export default class IndexPage extends React.Component<object, IndexPageState> {
   componentDidMount() {
     this.findSales('')
   }
-  private async findSales(dates: string[] | string) {
-    this.data = (await salesAPI.find(dates)).map(item => ({ ...item, color: '#' + Math.floor(Math.random() * 16777215).toString(16) }))
-    this.setState({ idUser: NaN })
+  private findSales(dates: string[] | string) {
+    const getRandomNumber = (limit: number) => {
+      return Math.floor(Math.random() * limit);
+    }
+    salesAPI.find(dates)
+      .then(data => data.map(item => ({ ...item, color: {h: getRandomNumber(360), s: getRandomNumber(100), l: getRandomNumber(100)} })))
+      .then(data => {
+        this.data = data
+        this.setState({idUser: NaN})
+      })
+      .catch(error => console.error(error))
   }
-  private getItemsAndGroups(): { items: Sale[]; groups: IGroup[], lines: { idUser: number; userName: string; color: string; data: { x: string; y: number }[] }[] } {
+  private getItemsAndGroups(): { items: Sale[]; groups: IGroup[], lines: { idUser: number; name: string; color: { h: number; s: number; }; data: { date: string; value: number }[] }[] } {
     const { idUser } = this.state
     const sales: Sale[] = []
-    const data = isNaN(idUser) ? this.data : [this.data[idUser]]
+    const data = Number.isNaN(idUser) ? this.data : [this.data[idUser]]
     const usersPreGrouped: {
       idUser: number
       userName: string
@@ -43,7 +55,10 @@ export default class IndexPage extends React.Component<object, IndexPageState> {
     }[] = []
     const daysPreGrouped: {
       idUser: number
-      color: string
+      color: {
+        h: number
+        s: number
+      }
       day: string
       userName: string
       count: number
@@ -106,22 +121,22 @@ export default class IndexPage extends React.Component<object, IndexPageState> {
       groups.push(group)
       dayGroups.filter(g => g.key.split('-')[0] === i.toString()).forEach(g => groups.push(g))
     })
-    const lines: { idUser: number; userName: string; color: string; data: { x: string; y: number }[] }[] = []
+    const lines: { idUser: number; name: string; color: { h: number; s: number; }; data: { date: string; value: number }[] }[] = []
     daysPreGrouped.forEach(dg => {
       const index = lines.findIndex(l => l.idUser === dg.idUser)
       if (index > -1) {
         lines[index].data.push({
-          x: dg.day,
-          y: dg.total
+          date: dg.day,
+          value: dg.total
         })
       } else {
         lines.push({
           idUser: dg.idUser,
-          userName: dg.userName,
+          name: dg.userName,
           color: dg.color,
           data: [{
-            x: dg.day,
-            y: dg.total
+            date: dg.day,
+            value: dg.total
           }]
         })
       }
@@ -143,7 +158,7 @@ export default class IndexPage extends React.Component<object, IndexPageState> {
           {this.data.length > 0 && (
             <DefaultButton
               text='Exportar registros'
-              onClick={() => salesAPI.export(isNaN(this.state.idUser) ? this.data : [this.data[this.state.idUser]])}
+              onClick={() => salesAPI.export(Number.isNaN(this.state.idUser) ? this.data : [this.data[this.state.idUser]])}
             />
           )}
           {this.data.length > 0 && (
@@ -159,13 +174,15 @@ export default class IndexPage extends React.Component<object, IndexPageState> {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     ref: (e: any) => {
                       if (e) {
-                        e.querySelector('.ms-Nav-linkText').style.color = datum.color
+                        e.querySelector('.ms-Nav-linkText').style.backgroundColor = `hsl(${datum.color.h}deg, ${datum.color.s}%, 25%)`
+                        e.querySelector('.ms-Nav-linkText').style.color = "#fff"
+                        e.querySelector('.ms-Nav-linkText').style.padding = '0 1rem'
                       }
                     }
                   })),
                   ...(() => {
                     const linkAllUsers: INavLink[] = []
-                    if (this.data.length > 2) {
+                    if (this.data.length > 1) {
                       linkAllUsers.push({
                         key: 'all-users',
                         name: 'Todos los usuarios',
@@ -213,43 +230,75 @@ export default class IndexPage extends React.Component<object, IndexPageState> {
                 }
               }}
             />
-            <VictoryChart
-              domain={[0, (() => {
-                let max = 0
-                for (const line of lines) {
-                  for (const datum of line.data) {
-                    if (datum.y > max) {
-                      max = datum.y
-                    }
+            <ResponsiveContainer width="60%" height="100%">
+              <LineChart
+                width={500}
+                height={300}
+                margin={{
+                  top: 5,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" type="category" allowDuplicatedCategory={false} tick={<CustomizedAxisTick />} />
+                <YAxis dataKey="value" />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend />
+                {lines.map(s => {
+                  const props: any = {
+                    dataKey: 'value',
+                    data: s.data,
+                    name: s.name,
+                    key: s.name,
+                    type: 'monotone',
+                    stroke: `hsl(${s.color.h}deg, ${s.color.s}%, 25%)`,
+                    label: <CustomizedLabel />
                   }
-                }
-                max = (max - (max % 100)) + 100
-                return max
-              })()]}
-              containerComponent={<VictoryVoronoiContainer style={{ width: '50%', height: 'auto', padding: '2%' }} />}
-            >
-              {lines.map(line => (
-                <VictoryGroup
-                  key={line.idUser}
-                  color={line.color}
-                  labels={({ datum }) => `${line.userName}: $${datum.y}`}
-                  labelComponent={
-                    <VictoryTooltip
-                      style={{ fontSize: 10 }}
-                    />
-                  }
-                  data={line.data}
-                >
-                  <VictoryLine />
-                  <VictoryScatter
-                    size={({ active }) => active ? 8 : 3}
-                  />
-                </VictoryGroup>
-              ))}
-            </VictoryChart>
+                  return <Line {...props} />
+                })}
+                </LineChart>
+            </ResponsiveContainer>
           </Stack>
         )}
       </Stack>
     )
   }
+}
+
+type CustomComponent = {
+  x?: number
+  y?: number
+  stroke?: string
+  value?: string
+  payload?: any
+  active?: boolean
+  label?: string
+}
+
+const CustomizedLabel: React.FC<CustomComponent> = ({x, y, stroke, value}) => (
+  <text x={x} y={y} dy={-4} fill={stroke} fontSize={10} textAnchor="middle" style={{ fontSize: '1rem' }}>
+    ${value}
+  </text>
+)
+
+const CustomizedAxisTick: React.FC<CustomComponent> = ({ x, y, payload }) => (
+  <g transform={`translate(${x},${y})`}>
+    <text x={0} y={0} dy={16} textAnchor="middle" fill="#666">
+      {payload.value}
+    </text>
+  </g>
+)
+
+const CustomTooltip: React.FC<CustomComponent> = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="custom-tooltip">
+        <p className="label">{`${payload[0].name}: $${payload[0].value}`}</p>
+      </div>
+    );
+  }
+
+  return null;
 }
