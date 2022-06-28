@@ -12,7 +12,7 @@
     "lint": "eslint --ext .ts,.tsx ."
   },
   "keywords": [],
-  "author": "Rodrigo Cid",
+  "author": "Farmacia de Jesús",
   "license": "MIT",
   "config": {
     "forge": "./forge.config.js"
@@ -33,12 +33,15 @@
     "@typescript-eslint/eslint-plugin": "^5.15.0",
     "@typescript-eslint/parser": "^5.15.0",
     "@vercel/webpack-asset-relocator-loader": "^1.7.0",
+    "aws-sdk": "^2.1163.0",
     "copy-webpack-plugin": "^10.2.4",
     "css-loader": "^6.7.1",
     "electron": "^17.1.2",
     "eslint": "^8.11.0",
     "eslint-plugin-import": "^2.25.4",
     "fork-ts-checker-webpack-plugin": "^7.2.1",
+    "mock-aws-s3": "^4.0.2",
+    "nock": "^13.2.7",
     "node-loader": "^2.0.0",
     "style-loader": "^3.3.1",
     "ts-loader": "^9.2.8",

@@ -6,7 +6,6 @@ import { DefaultButton } from '@fluentui/react/lib/Button'
 import { mergeStyles } from '@fluentui/react/lib/Styling'
 import { SalesAPI, Datum, Sale } from '../API/sales/types'
 import Filter from '../components/filter'
-import { Background, VictoryChart, VictoryGroup, VictoryLine, VictoryScatter, VictoryTheme, VictoryTooltip, VictoryVoronoiContainer } from 'victory'
 import { LineChart, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line } from 'recharts'
 declare const salesAPI: SalesAPI
 interface DatumItem extends Datum {
